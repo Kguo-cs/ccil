@@ -1,6 +1,6 @@
 This repo is the implementation of the following paper:
 
-**CCIL: Context-conditioned imitation learning for urban driving. RSS, 2023**
+** Ke Guo, Wei Jing, Junbo Chen, Jia Pan. CCIL: Context-conditioned imitation learning for urban driving. RSS, 2023**
 
 ## Lyft Dataset
 Download Lyft's [Python software kit](https://github.com/woven-planet/l5kit). 
