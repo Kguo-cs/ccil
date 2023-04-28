@@ -1,0 +1,134 @@
+model_params:
+    history_num_frames_ego: 2
+    history_num_frames_agents: 2
+    future_num_frames: 15
+
+    step_time: 0.1
+
+    dropout: 0.1
+    head_num: 8
+    d_model: 128
+
+    local_num_layers: 3
+    global_num_layers: 6
+    causal_num_layers: 3
+    causal_len: 15
+    causal_interval: 2
+
+    lane_feat_dim: 10
+    cross_feat_dim: 5
+    ego_feat_dim: 2
+    agent_feat_dim: 7
+    act_dim: 3
+
+    prev_weight: 0.3
+
+    read_into_memory: False
+
+    ignore_ego: True
+
+    yaw_w: 1
+
+    acc_w: 0.1
+    control_w: 0.01
+    lqr_iter: 1
+
+    yaw_vel_w: 0.1
+    yaw_acc_w: 0.1
+    yaw_control_w: 0.000001
+
+optimizer:
+
+  learning_rate: 5e-4
+  weight_decay: 1e-4
+  warmup_steps: 10000
+
+###################
+## Input raster parameters
+raster_params:
+  # rasterization backend
+  render_engine: "OPENCV"
+  # raster image size [pixels]
+  raster_size:
+    - 224
+    - 224
+  # raster's spatial resolution [meters per pixel]: the size in the real world one pixel corresponds to.
+  pixel_size:
+    - 0.5
+    - 0.5
+  # From 0 to 1 per axis, [0.5,0.5] would show the ego centered in the image.
+  ego_center:
+    - 0.25
+    - 0.5
+  map_type: "py_semantic"
+  # the keys are relative to the dataset environment variable
+  satellite_map_key: "aerial_map/aerial_map.png"
+  semantic_map_key: "semantic_map/semantic_map.pb"
+  dataset_meta_key: "meta.json"
+
+  # e.g. 0.0 include every obstacle, 0.5 show those obstacles with >0.5 probability of being
+  # one of the classes we care about (cars, bikes, peds, etc.), >=1.0 filter all other agents.
+  filter_agents_threshold: 0.5
+
+  # whether to completely disable traffic light faces in the semantic rasterizer
+  # this disable option is not supported in avsw_semantic
+  disable_traffic_light_faces: False
+
+  # When set to True, the rasterizer will set the raster origin at bottom left,
+  # i.e. vehicles are driving on the right side of the road.
+  # With this change, the vertical flipping on the raster used in the visualization code is no longer needed.
+  # Set it to False for models trained before v1.1.0-25-g3c517f0 (December 2020).
+  # In that case visualisation will be flipped (we've removed the flip there) but the model's input will be correct.
+  set_origin_to_bottom: False
+
+
+###################
+## VectorNet Params
+data_generation_params:
+  # maximum number of other agents to take (if less will be padded)
+  other_agents_num: 30
+  # maximum distance from AoI for another agent to be picked
+  max_agents_distance: 50
+  # Parameters defining which and how many lanes to be retrieved
+  lane_params:
+    # maximum number of lanes to take into account
+    # if less they will be padded; if more the closest to AoI are picked
+    max_num_lanes: 30
+    # max number of points per lane
+    max_points_per_lane: 20
+    # max number of points per crosswalk
+    max_points_per_crosswalk: 13
+    # maximum radius around the AoI for which we retrieve
+    max_retrieval_distance_m: 35
+    # max number of crosswalks
+    max_num_crosswalks: 12
+
+  start_frame_index: 1
+  dist_enhanced: True
+
+  centroid_std: 2
+  use_goal_yaw: True
+  use_uniform_yaw: False
+  use_uniform_centroid: False
+  use_AckermanPerturbation: False
+
+train_data_loader:
+    key: 'scenes/train.zarr'
+    shuffle: True
+    batch_size: 128
+
+
+val_data_loader:
+    key: 'scenes/validate.zarr'
+    shuffle: False
+    batch_size: 256
+
+eval:
+  num_scenes_to_unroll: 1024
+  batch_size: 64
+
+
+log_dir: exp
+exp_name: lyft
+data_type: 'lyft'
+seed: 42
