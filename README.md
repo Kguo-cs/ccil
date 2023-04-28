@@ -28,3 +28,4 @@ python eval.py \
 --data_root /path/to/lyft/data \
 ```
 
+More pretrained model, visualization, data information can be found in [Google Drive](https://drive.google.com/drive/folders/1m3PTcYLNhZIFab1T7rlScU6qPOIgosyq?usp=share_link).
